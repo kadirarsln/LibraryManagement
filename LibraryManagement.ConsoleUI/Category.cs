@@ -10,7 +10,6 @@ namespace LibraryManagement.ConsoleUI
     {
         public Category()
         {
-
         }
         public Category(int id, string name)
         {
