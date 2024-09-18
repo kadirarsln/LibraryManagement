@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryManagement.ConsoleUI
+namespace LibraryManagement.ConsoleUI.Models
 {
     public record Author(int Id, string Name, string Surname);
 }
