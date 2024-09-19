@@ -1,4 +1,5 @@
 ﻿using LibraryManagement.ConsoleUI.Models;
+using LibraryManagement.ConsoleUI.Models.Dtos;
 using LibraryManagement.ConsoleUI.Repository;
 using System.Linq.Expressions;
 using System.Net;
@@ -30,6 +31,12 @@ public class BookService
         Console.WriteLine(book);
     }
 
+    public void Add(Book book)
+    {
+        Book created = bookRepository.Add(book);
+        Console.WriteLine("Kitap Eklendi");
+    }
+
     public void Remove(int id)
     {
         Book deletedBook = bookRepository.Remove(id);
@@ -50,5 +57,51 @@ public class BookService
             return;
         }
         Console.WriteLine(isbnBook);
+    }
+    public void GetAllBooksByPageSizeFİlter(int min, int max)
+    {
+        List<Book> books = bookRepository.GetAllBooksByPageSizeFilter(min, max);
+        foreach (Book book in books)
+        {
+            Console.WriteLine(book);
+        }
+    }
+
+    public void GetAllBooksByTitleContains(string text)
+    {
+        List<Book> books = bookRepository.GetAllBooksByTitleContains(text);
+        books.ForEach(book => Console.WriteLine(book));
+        //foreach (Book book in books)
+        //{
+        //    Console.WriteLine(book);
+        //}
+    }
+
+    public void GetAllBookOrderByTitle()
+    {
+        List<Book> books = bookRepository.GetAllBookOrderByTitle();
+        books.ForEach(book => Console.WriteLine(book));
+    }
+    public void GetBookMaxPageSize()
+    {
+        Book max = bookRepository.GetBookMaxPageSize();
+        Console.WriteLine(max);
+    }
+    public void GetBookMinPageSize()
+    {
+        Book min = bookRepository.GetBookMinPageSize();
+        Console.WriteLine(min);
+    }
+
+    public void GetDetails()
+    {
+        List<BookDetailDto> books = bookRepository.GetDetails();
+        foreach (BookDetailDto bookDetail in books) { Console.WriteLine(bookDetail); }
+
+    }
+    public void GetDetails2()
+    {
+        List<BookDetailDto> books = bookRepository.GetDetails2();
+        foreach (BookDetailDto bookDetail in books) { Console.WriteLine(bookDetail); }
     }
 }
