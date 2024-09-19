@@ -40,9 +40,17 @@ using System.Threading.Channels;
 
 BookService bookService = new BookService();
 
-bookService.GetAll();
-bookService.GetById(4);
-bookService.GetBookByISBN(null);
+//bookService.GetAll();
+bookService.GetDetails();
+//bookService.GetById(4);
+//bookService.GetBookByISBN("a");
+
+//bookService.GetAllBookOrderByTitle();
+//bookService.GetBookMaxPageSize();
+//bookService.GetBookMinPageSize();
+
+//bookService.GetAllBooksByTitleContains("GER");
+//bookService.GetAllBooksByPageSizeFİlter(100, 300);
 
 
 //List<Book> books = new List<Book>() {
@@ -111,7 +119,7 @@ bookService.GetBookByISBN(null);
 //    }
 //    Console.WriteLine();
 
-//    //categories.ForEach(categorie => Console.WriteLine($"Kategori Id: {categorie.Id} Kategori Adı: {categorie.Name}"));
+//    categories.ForEach(categorie => Console.WriteLine($"Kategori Id: {categorie.Id} Kategori Adı: {categorie.Name}"));
 //}
 
 //void GetAllAuthors()
@@ -229,25 +237,25 @@ void GetBookInputs(out int id,
 }
 
 //Kitap dönebilmek adına validasyonlarımızı yazabilmek için Kitap dönüyoruz.
-//Book GetBookInputs2()
-//{
-//    PrintAyirac("Kitap Ekleme: ");
-//    Console.WriteLine("Lütfen kitap ID giriniz: ");
-//    int id = Convert.ToInt32(Console.ReadLine());
-//    Console.WriteLine("Lütfen kitap Başlığını giriniz: ");
-//    string tittle = Console.ReadLine();
-//    Console.WriteLine("Lütfen kitap Açıklamasını giriniz: ");
-//    string description = Console.ReadLine();
-//    Console.WriteLine("Lütfen kitap Sayfa Sayısını giriniz: ");
-//    int pageSize = Convert.ToInt32(Console.ReadLine());
-//    Console.WriteLine("Lütfen kitap Yayımlanma Tarihini giriniz: ");
-//    string publishDate = Console.ReadLine();
-//    Console.WriteLine("Lütfen ISBN giriniz: ");
-//    string isbn = Console.ReadLine();
+Book GetBookInputs2()
+{
+    PrintAyirac("Kitap Ekleme: ");
+    Console.WriteLine("Lütfen kitap ID giriniz: ");
+    int id = Convert.ToInt32(Console.ReadLine());
+    Console.WriteLine("Lütfen kitap Başlığını giriniz: ");
+    string tittle = Console.ReadLine();
+    Console.WriteLine("Lütfen kitap Açıklamasını giriniz: ");
+    string description = Console.ReadLine();
+    Console.WriteLine("Lütfen kitap Sayfa Sayısını giriniz: ");
+    int pageSize = Convert.ToInt32(Console.ReadLine());
+    Console.WriteLine("Lütfen kitap Yayımlanma Tarihini giriniz: ");
+    string publishDate = Console.ReadLine();
+    Console.WriteLine("Lütfen ISBN giriniz: ");
+    string isbn = Console.ReadLine();
 
-//    Book book = new Book(id, tittle, description, pageSize, publishDate, isbn);
-//    return book;
-//}
+    Book book = new Book(id,1, tittle, description, pageSize, publishDate, isbn);
+    return book;
+}
 
 //bool AddBookValidator(Book book)
 //{

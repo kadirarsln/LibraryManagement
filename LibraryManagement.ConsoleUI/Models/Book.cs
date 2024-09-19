@@ -2,6 +2,7 @@
 {
     public record Book(
         int Id,
+        int CategoryId,
         string Tittle,
         string Description,
         int PageSize,
