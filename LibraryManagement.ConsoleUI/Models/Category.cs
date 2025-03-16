@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace LibraryManagement.ConsoleUI.Models
 {
-    public class Category
+    public sealed class Category : Entity<int>
     {
         public Category()
         {
         }
-        public Category(int id, string name)
+        public Category(int id, string name) : base(id)
         {
             Id = id;
             Name = name;
