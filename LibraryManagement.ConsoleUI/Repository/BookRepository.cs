@@ -1,29 +1,26 @@
 ﻿using LibraryManagement.ConsoleUI.Models;
 using LibraryManagement.ConsoleUI.Models.Dtos;
+using LibraryManagement.ConsoleUI.Service;
 
 namespace LibraryManagement.ConsoleUI.Repository
 {
-    public class BookRepository
+    public class BookRepository : BaseRepository, IBookRepository
     {
-        List<Book> books = new List<Book>()
-        {
-new Book (1,1,"Germinal", "Kömür Madeni", 341,"2012 Mayıs", "9781234567897"),
-new Book (2,1,"Suç ve Ceza", "Raskolnikov", 341,"2010 Haziran", "9781234567895"),
-new Book (3,1,"Kumarbaz", "Bir Öğretmenin Hayatı", 210,"2009 Ocak", "9781234567892"),
-new Book (4,2,"Araba Sevdası", "Araba ile alakası olmayan kitap", 180,"2000 Ocak", "9781234567838"),
-new Book (5,2,"Ateşten Gömlek", "Kurtuluş Savaşını anlatan gitap", 120,"2001 Eylül", "9781234567834"),
-new Book (6,2,"Kaşağı", "Okunmaması gereken bir kitap", 95,"1993 Ocak", "9781234567845"),
-new Book (7,3,"28 Şampiyonluk", "Kesinlikle gerçektir.", 1907,"1907 Ocak", "9781234567807"),
-new Book (8,3,"16 Yıl Şampiyonluk", "Hayal ürünüdür.", 255,"10 Eylül", "9781234567816"),
-new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "9781234567800"),
-};
+        private List<Book> books;
+        private List<Category> categories;
+        private List<Author> authors;
+        private List<Member> members;
 
-        List<Category> categories = new List<Category>()
+
+        public BookRepository()
         {
-            new Category (1,"Dünya Klasikleri"),
-            new Category (2,"Türk Klasikleri"),
-            new Category (3,"Bilim Kurgu"),
-        };
+            books = Books();
+            categories = Categories();
+            authors = Authors();
+            //members = Members();
+            //Base repositoryden gelmektedir.
+        }
+
 
         //LINQ = Language Integrated Query 
         public List<Book> GetAll()
@@ -45,7 +42,7 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
             //}
             //return filteredBooks;
 
-            //**LINQ İlk yöntem (en geleneksel) ToList methodunda DB Connections kesilmektedir. Joinlerde kullanırız.
+            //**LINQ İlk yöntem (en geleneksel). ToList methodunda DB Connections kesilmektedir. Joinlerde kullanırız.
 
             //List<Book> result = (from b in books
             //                     where b.PageSize <= max && b.PageSize >= min
@@ -79,13 +76,14 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
             //return filteredBooksText;
 
             //List<Book> result = books.Where(b => b.Tittle.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
-            List<Book> result = books.FindAll(b => b.Tittle.Contains(text, StringComparison.InvariantCultureIgnoreCase));
+            List<Book> result = books.FindAll(b => b.Title.Contains(text, StringComparison.InvariantCultureIgnoreCase));
             return result;
         }
 
         //Null gelebilir. Önden uyarıyoruz.
         public Book? GetBookByISBN(string isbn)
         {
+
             //Book? book1 = null;  //new ile tanımlarsak Bütün değerlerini girmemiz gerekir.
 
             //foreach (Book item in books)
@@ -115,17 +113,17 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
 
         }
 
-        //Çoktan Aza Doğru 
+        //Küçükten Büyüğe Doğru sayı olarak A -----> Z Harf olarak.
         public List<Book> GetAllBookOrderByTitle()
         {
-            List<Book> orderedBooks = books.OrderBy(b => b.Tittle).ToList();
+            List<Book> orderedBooks = books.OrderBy(b => b.Title).ToList();
             return orderedBooks;
         }
 
-        //Azdan Çoğa doğru
+        //Büyükten Küçüğe Doğru sayı olarak Z-----> A Harf olarak.
         public List<Book> GetAllBookOrderByDescendingTitle()
         {
-            List<Book> orderedBooks = books.OrderByDescending(b => b.Tittle).ToList();
+            List<Book> orderedBooks = books.OrderByDescending(b => b.Title).ToList();
             return orderedBooks;
         }
 
@@ -146,7 +144,7 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
             return created;
         }
 
-        public Book? GetById(int id)
+        public Book? GetById(Guid id)
         {
             Book? book1 = null;
             foreach (Book item in books)
@@ -163,7 +161,7 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
             return book1;
         }
 
-        public Book? Remove(int id)
+        public Book? Remove(Guid id)
         {
             Book deletedBook = GetById(id);
             if (deletedBook != null)
@@ -180,10 +178,14 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
                 from book in books
                 join category in categories
                 on book.CategoryId equals category.Id
+                join author in authors
+                on book.AuthorId equals author.Id
                 select new BookDetailDto(
                     Id: book.Id,
                     CategoryName: category.Name,
-                    Tittle: book.Tittle,
+                    AuthorName: author.Name,
+                    AuthorSurname: author.Surname,
+                    Tittle: book.Title,
                     Description: book.Description,
                     PageSize: book.PageSize,
                     PublishDate: book.PublishDate,
@@ -192,17 +194,85 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
             return result.ToList();
         }
 
-        public List<BookDetailDto> GetDetails2()
+        //2 Den fazla tablomuz varsa Lambda yöntemi yetersiz kalmaktadır.
+        //public List<BookDetailDto> GetDetails2()
+        //{
+        //    List<BookDetailDto> details =
+        //        books.Join(categories,
+
+        //        b => b.CategoryId,
+        //        c => c.Id,
+        //        (book, category) => new BookDetailDto(
+        //            Id: book.Id,
+        //            CategoryName: category.Name,
+        //            "",
+        //            Tittle: book.Tittle,
+        //            Description: book.Description,
+        //            PageSize: book.PageSize,
+        //            PublishDate: book.PublishDate,
+        //            ISBN: book.ISBN
+
+        //            )
+        //        ).ToList();
+        //    return details;
+        //}
+
+        public List<BookDetailDto> GetAllAuthorAndBookDetails()
+        {
+            var result =
+                from book in books
+                join category in categories on book.CategoryId equals category.Id
+                join author in authors on book.AuthorId equals author.Id
+
+                select new BookDetailDto(
+                    Id: book.Id,
+                    CategoryName: category.Name,
+                    AuthorName: author.Name,
+                    AuthorSurname: author.Surname,
+                    Tittle: book.Title,
+                    Description: book.Description,
+                    PageSize: book.PageSize,
+                    PublishDate: book.PublishDate,
+                    ISBN: book.ISBN
+                    );
+            return result.ToList();
+        }
+
+        public List<BookDetailDto> GetAllDetailsByCategoryId(int categoryId)
+        {
+            var result =
+                from book in books
+                where book.CategoryId == categoryId
+                join category in categories on book.CategoryId equals category.Id
+                join author in authors on book.AuthorId equals author.Id
+
+                select new BookDetailDto(
+                    Id: book.Id,
+                    CategoryName: category.Name,
+                    AuthorName: author.Name,
+                    AuthorSurname: author.Surname,
+                    Tittle: book.Title,
+                    Description: book.Description,
+                    PageSize: book.PageSize,
+                    PublishDate: book.PublishDate,
+                    ISBN: book.ISBN
+                    );
+            return result.ToList();
+        }
+
+        public List<BookDetailDto> GetAllDetailsByCategoryId2(int categoryId)
         {
             List<BookDetailDto> details =
-                books.Join(categories,
+                books.Where(x => x.CategoryId == categoryId).Join(categories,
 
                 b => b.CategoryId,
                 c => c.Id,
                 (book, category) => new BookDetailDto(
                     Id: book.Id,
                     CategoryName: category.Name,
-                    Tittle: book.Tittle,
+                    "",
+                    "",
+                    Tittle: book.Title,
                     Description: book.Description,
                     PageSize: book.PageSize,
                     PublishDate: book.PublishDate,
@@ -211,6 +281,18 @@ new Book (9,3,"Ali Arı", "Uyanık Ceo'nun hikayesi", 551,"20 Haziran Mayıs", "
                     )
                 ).ToList();
             return details;
+        }
+
+        public List<string> GetAllTitles()
+        {
+            List<string> titles = books.Select(x => x.Title).ToList();
+            return titles;
+        }
+
+
+        public Book? Update(Book item)
+        {
+            throw new NotImplementedException();
         }
     }
 }
