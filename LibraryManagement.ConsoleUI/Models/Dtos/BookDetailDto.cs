@@ -2,8 +2,10 @@
 
 public record BookDetailDto(
 
-        int Id,
+        Guid Id,
         string CategoryName,
+        string AuthorName,
+        string AuthorSurname,
         string Tittle,
         string Description,
         int PageSize,

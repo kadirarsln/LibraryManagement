@@ -20,7 +20,7 @@ public class BookService
         }
     }
 
-    public void GetById(int id)
+    public void GetById(Guid id)
     {
         Book? book = bookRepository.GetById(id);
         if (book == null)
@@ -33,11 +33,19 @@ public class BookService
 
     public void Add(Book book)
     {
-        Book created = bookRepository.Add(book);
+        BookIdBusinessRules(book.Id);
+        BookISBNBusinessRules(book.ISBN);
+
+        Book crreated = bookRepository.Add(book);
         Console.WriteLine("Kitap Eklendi");
     }
 
-    public void Remove(int id)
+    private void BookISBNBusinessRules(string ıSBN)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Remove(Guid id)
     {
         Book deletedBook = bookRepository.Remove(id);
         if (deletedBook != null)
@@ -82,6 +90,12 @@ public class BookService
         List<Book> books = bookRepository.GetAllBookOrderByTitle();
         books.ForEach(book => Console.WriteLine(book));
     }
+
+    public void GetAllBookOrderByDescendingTitle()
+    {
+        List<Book> books = bookRepository.GetAllBookOrderByDescendingTitle();
+        books.ForEach(book => Console.WriteLine(book));
+    }
     public void GetBookMaxPageSize()
     {
         Book max = bookRepository.GetBookMaxPageSize();
@@ -99,9 +113,45 @@ public class BookService
         foreach (BookDetailDto bookDetail in books) { Console.WriteLine(bookDetail); }
 
     }
-    public void GetDetails2()
+    //public void GetDetails2()
+    //{
+    //    List<BookDetailDto> books = bookRepository.GetDetails2();
+    //    foreach (BookDetailDto bookDetail in books) { Console.WriteLine(bookDetail); }
+    //}
+
+    public void GetAllAuthorAndBookDetails()
     {
-        List<BookDetailDto> books = bookRepository.GetDetails2();
-        foreach (BookDetailDto bookDetail in books) { Console.WriteLine(bookDetail); }
+        List<BookDetailDto> detailDtos = bookRepository.GetAllAuthorAndBookDetails();
+        detailDtos.ForEach(bookDetail => Console.WriteLine(bookDetail));
+    }
+
+    public void GetAllDetailsByCategoryId(int categoryId)
+    {
+        List<BookDetailDto> detailDtos = bookRepository.GetAllDetailsByCategoryId(categoryId);
+        detailDtos.ForEach(bookDetail => Console.WriteLine(bookDetail));
+    }
+    public void GetAllDetailsByCategoryId2(int categoryId)
+    {
+        List<BookDetailDto> detailDtos = bookRepository.GetAllDetailsByCategoryId2(categoryId);
+        detailDtos.ForEach(bookDetail => Console.WriteLine(bookDetail));
+    }
+
+    private void BookIdBusinessRules(Guid id)
+    {
+        Book? getByIdBook = bookRepository.GetById(id);
+        if (getByIdBook != null)
+        {
+            Console.WriteLine($"Girmiş olduğunuz kitabın Id alanı benzersiz olmalıdır: {id}");
+            return;
+        }
+    }
+    private void BookISBNBusinessRules(Guid isbn)
+    {
+        Book? getByIdBook = bookRepository.GetById(isbn);
+        if (getByIdBook != null)
+        {
+            Console.WriteLine($"Girmiş olduğunuz kitabın Id alanı benzersiz olmalıdır: {isbn}");
+            return;
+        }
     }
 }
